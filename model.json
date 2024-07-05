@@ -1,0 +1,21 @@
+[
+ {
+    "hash": "41567f28db47bee7",
+    "targetAudience": {
+      "name": "All 25-45 BC",
+      "gender": "all",
+      "ageFrom": 25,
+      "ageTo": 45,
+      "income": "bc"
+    },
+    "points": [
+      {
+        "lat": "55.573691",
+        "lon": "37.631423",
+        "azimuth": 273
+      }
+    ],
+    "value": 23.51
+  }
+]
+

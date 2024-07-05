@@ -1,3 +1,6 @@
 go.sum
 tmp/
 **/*_templ.go
+client/bun.lockb
+static/index.js
+
