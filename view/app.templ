@@ -9,16 +9,61 @@ templ App() {
 			<title>Super Mega App 💪</title>
 			<script src="https://cdn.tailwindcss.com"></script>
 			<script src="api/static/index.js"></script>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.2.4/ol.css"/>
 		</head>
 		<body>
-			@Map()
+			<div class="flex flex-row h-screen bg-lime-50 p-1">
+				@Controls()
+				@Map()
+			</div>
 		</body>
 	</html>
 }
 
 templ Map() {
-	<div class="flex flex-col items-center justify-center content-center">
-		<div id="map" class="w-screen h-80 rounded-full"></div>
-		<button onclick="showMap()" class="block size-64 bg-red-600"></button>
+	<div id="map" class="overflow-hidden rounded-xl size-full"></div>
+	<script>showMap()</script>
+}
+
+templ Controls() {
+	<div class="flex flex-col w-2/6 h-full mr-1 ">
+		@Audience()
+		@FilePicker()
+	</div>
+}
+
+templ Audience() {
+	<div class="flex flex-col justify-center rounded-xl size-full bg-cyan-100 size-full px-8 py-6">
+		<form action="/fuck" method="post" class="flex flex-col gap-4 h-2/4 p-2">
+			<h1 class="font-bold text-xl">Заполните для рассчета</h1>
+			<label for="boards">Количество сторон:</label>
+			<input id="boards" type="number" placeholder="Количество сторон" class="rounded-xl pl-2"/>
+			<button type="submit" class="rounded-xl font-bold text-white h-12 bg-blue-300">Запросить рассчет</button>
+			<!--
+<select name="gender" id="gender" class="bg-white pl-1 rounded-xl">
+            <option value="" selected disabled>Выберите пол</option>
+            <option value="all">Любой</option>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+        </select>
+        <input class="pl-1 rounded-xl" type="number" name="ageFrom" placeholder="Возраст от" />
+        <input class="pl-1 rounded-xl" type="number" name="ageTo" placeholder="Возраст до" />
+-->
+		</form>
+	</div>
+}
+
+templ FilePicker() {
+	<div class="flex flex-col justify-center mt-1 rounded-xl w-full h-3/6 bg-cyan-100 px-8 py-6">
+		<form action="/analyze_points" method="post" class="flex flex-col gap-4">
+			<label for="file">Загрузите файл с точками для получения оценки</label>
+			<input
+				id="file"
+				accept="text/json"
+				type="file"
+				class="file:rounded-xl file:bg-blue-300 hover:file:bg-blue-400 file:border-0 file:text-white"
+			/>
+			<button type="submit" class="rounded-xl h-12 bg-blue-300 text-white font-bold">Запросить оценку</button>
+		</form>
 	</div>
 }
