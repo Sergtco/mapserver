@@ -3,4 +3,5 @@ tmp/
 **/*_templ.go
 client/bun.lockb
 static/index.js
-
+model/venv
+model/__pycache__
