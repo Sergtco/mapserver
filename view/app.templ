@@ -55,11 +55,19 @@ templ Audience() {
 
 templ FilePicker() {
 	<div class="flex flex-col justify-center mt-1 rounded-xl w-full h-3/6 bg-cyan-100 px-8 py-6">
-		<form action="/analyze_points" method="post" class="flex flex-col gap-4">
+		<form
+			action="/evaluate"
+			onsubmit="evaluate(this)"
+			method="post"
+			id="file_form"
+			enctype="multipart/form-data"
+			class="flex flex-col gap-4"
+		>
 			<label for="file">Загрузите файл с точками для получения оценки</label>
 			<input
-				id="file"
-				accept="text/json"
+				id="points"
+				name="points"
+				accept="application/json"
 				type="file"
 				class="file:rounded-xl file:bg-blue-300 hover:file:bg-blue-400 file:border-0 file:text-white"
 			/>

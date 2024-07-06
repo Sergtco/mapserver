@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -21,55 +21,60 @@ func renderView(ctx echo.Context, t templ.Component, status int) error {
 }
 
 func BestPoints(ctx echo.Context) error {
-    // raw JSON 
-    rawBytes, err := io.ReadAll(ctx.Request().Body)
-    if err != nil {
-        return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
-    }
+	// raw JSON
+	rawBytes, err := io.ReadAll(ctx.Request().Body)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
+	}
 
-    req, err := http.NewRequest("POST", modelUrl + "/best_points", bytes.NewBuffer(rawBytes))
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error creating request"})
-    }
-    req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("POST", modelUrl+"/best_points", bytes.NewBuffer(rawBytes))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error creating request"})
+	}
+	req.Header.Set("Content-Type", "application/json")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error performing request"})
-    }
-    defer resp.Body.Close()
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error performing request"})
+	}
+	defer resp.Body.Close()
 
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal error"})
-    }
-    return ctx.JSON(http.StatusOK, body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal error"})
+	}
+	return ctx.JSONBlob(http.StatusOK, body)
 }
 
 func Evaluate(ctx echo.Context) error {
-    // raw JSON 
-    rawBytes, err := io.ReadAll(ctx.Request().Body)
-    if err != nil {
-        return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
-    }
+	// raw JSON
+	data, _, err := ctx.Request().FormFile("points")
+	if err != nil {
+		return fmt.Errorf("Unable to read multipart-form :%s", err)
+	}
+	rawBytes, err := io.ReadAll(data)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
+	}
 
-    req, err := http.NewRequest("POST", modelUrl + "/evaluate", bytes.NewBuffer(rawBytes))
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error creating request"})
-    }
-    req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("POST", modelUrl+"/evaluate", bytes.NewBuffer(rawBytes))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error creating request"})
+	}
+	req.Header.Set("Content-Type", "application/json")
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error performing request"})
-    }
-    defer resp.Body.Close()
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Unable to receive response from model.", err)
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error performing request"})
+	}
+	defer resp.Body.Close()
 
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal error"})
-    }
-    return ctx.JSON(http.StatusOK, body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal error"})
+	}
+	return ctx.JSONBlob(http.StatusOK, body)
 }

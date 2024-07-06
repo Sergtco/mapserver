@@ -1,21 +1,44 @@
-[
- {
-    "hash": "41567f28db47bee7",
-    "targetAudience": {
-      "name": "All 25-45 BC",
-      "gender": "all",
-      "ageFrom": 25,
-      "ageTo": 45,
-      "income": "bc"
+{
+    "model": {
+        "in": {
+            "targetAudience": {
+                "name": "string",
+                "gender": "string",
+                "ageFrom": "int",
+                "ageTo": "int",
+                "income": "string"
+            },
+            "points": [
+                {
+                    "lon": "float",
+                    "lat": "float",
+                    "azimuth": "int"
+                }
+            ]
+        },
+        "out": {
+            "value": "int"
+        } 
     },
-    "points": [
-      {
-        "lat": "55.573691",
-        "lon": "37.631423",
-        "azimuth": 273
-      }
-    ],
-    "value": 23.51
-  }
-]
-
+    "algo": {
+        "in": {
+            "targetAudience": {
+                "name": "string",
+                "gender": "string",
+                "ageFrom": "int",
+                "ageTo": "int",
+                "income": "string"
+            },
+            "num_sides": "int"
+        },
+        "out": {
+            "points": [
+                {
+                    "lon": "float",
+                    "lat": "float",
+                    "azimuth": "string|int"
+                }
+            ]
+        }
+            
+}
