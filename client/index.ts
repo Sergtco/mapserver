@@ -1,4 +1,3 @@
-import Map from 'ol/Map.js';
 import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
 import View from 'ol/View.js';
@@ -9,6 +8,12 @@ import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
+import Stroke from 'ol/style/Stroke';
+import GeoJSON from 'ol/format/GeoJSON';
+import Fill from 'ol/style/Fill';
+import Text from 'ol/style/Text';
+import { Map as GeoMap } from "ol";
+import { Geometry } from 'ol/geom';
 
 
 type Pin = {
@@ -26,16 +31,51 @@ var view = new View({
     center: theatre,
     zoom: 15,
 });
-var map: Map;
+var map: GeoMap;
+var valueSum = new Map<string, number>();
 
 function showMap() {
     if (mapOpen) {
-        map = new Map({
+        let src = new VectorSource({
+            format: new GeoJSON(),
+            url: "/api/static/moscow.geojson"
+        });
+        src.forEachFeature((f) => {
+            valueSum.set(f.getProperties()["district"] as string, 0);
+        });
+
+        map = new GeoMap({
             target: 'map',
             layers: [
                 new TileLayer({
                     source: new OSM(),
                 }),
+                new VectorLayer({
+                    opacity: 0.3,
+                    source: src,
+                    visible: true,
+                    style: (f) => {
+                        return new Style({
+                            stroke: new Stroke({
+                                color: "white",
+                                width: 1,
+                            }),
+                            fill: new Fill({
+                                color: "blue"
+                            }),
+                            text: new Text({
+                                text: f.getProperties()["district"],
+                                scale: 2,
+                                fill: new Fill({
+                                    color: "black",
+                                }),
+                                backgroundFill: new Fill({
+                                    color: "white",
+                                })
+                            }),
+                        })
+                    }
+                })
             ],
             view: view,
         });
@@ -43,6 +83,7 @@ function showMap() {
     }
 }
 
+var gotPoints = false;
 function showPoints(data: Array<Pin>) {
     //parse points and convert them to features for vectorLayer
     const features = data.map((point) => new Feature({
@@ -60,10 +101,54 @@ function showPoints(data: Array<Pin>) {
     let vectorSource = new VectorSource({ features: features });
     const vectorLayer = new VectorLayer({ source: vectorSource });
     let layers = map.getLayers();
-    map.setLayers(layers.getArray().slice(0, 0));
+    console.log(layers.getLength());
+
+    if (gotPoints) {
+        map.setLayers(layers.getArray().slice(0, 2));
+    } else {
+        gotPoints = true;
+    }
+    // for (let point of data) {
+    //     if (point.value == undefined) continue;
+    //     (map.getLayers().getArray()[1] as VectorLayer<Feature<Geometry>>).getSource()?.forEachFeature((f) => {
+    //         if (f.getGeometry()!.containsXY(point.longitude, point.latitude)) {
+    //
+    //             valueSum.set(f.getProperties()["district"], valueSum.get(f.getProperties()["district"])! + point.value!);
+    //         }
+    //     })
+    // }
+    // console.log(valueSum);
+    //
+    // (map.getLayers().getArray()[1] as VectorLayer<Feature<Geometry>>).getSource()?.forEachFeature((f) => {
+    //     console.log(f.getProperties()["district"]);
+    //
+    //     f.setStyle(
+    //         (f) => {
+    //             return new Style({
+    //                 stroke: new Stroke({
+    //                     color: "white",
+    //                     width: 1,
+    //                 }),
+    //                 fill: new Fill({
+    //                     color: "blue"
+    //                 }),
+    //                 text: new Text({
+    //                     text: f.getProperties()["district"] + " " + valueSum.get(f.getProperties()["district"])!.toString(),
+    //                     scale: 2,
+    //                     fill: new Fill({
+    //                         color: "black",
+    //                     }),
+    //                     backgroundFill: new Fill({
+    //                         color: "white",
+    //                     })
+    //                 }),
+    //             })
+    //         }
+    //     )
+    // })
     map.addLayer(vectorLayer);
     view.setCenter(fromLonLat([data[0].longitude, data[0].latitude]));
-    console.log(map.getLayers());
+    console.log(layers.getLength());
     map.renderSync();
 }
 
