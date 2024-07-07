@@ -11,5 +11,6 @@ func main() {
 	app.POST("/evaluate", handlers.Evaluate)
 	app.POST("/best_points", handlers.BestPoints)
 	app.Static("/api/static", "static")
-	app.Start("localhost:6969")
+	app.Start("0.0.0.0:6969")
+	// app.Start("127.0.0.1:6969")
 }

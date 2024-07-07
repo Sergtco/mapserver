@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -25,6 +26,11 @@ func BestPoints(ctx echo.Context) error {
 	rawBytes, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
+	}
+
+	modelUrl, found := os.LookupEnv("MODEL_URL")
+	if !found {
+		modelUrl = "http://localhost:8000"
 	}
 
 	req, err := http.NewRequest("POST", modelUrl+"/best_points", bytes.NewBuffer(rawBytes))
@@ -58,6 +64,10 @@ func Evaluate(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid JSON"})
 	}
 
+	modelUrl, found := os.LookupEnv("MODEL_URL")
+	if !found {
+		modelUrl = "http://localhost:8000"
+	}
 	req, err := http.NewRequest("POST", modelUrl+"/evaluate", bytes.NewBuffer(rawBytes))
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": "Error creating request"})

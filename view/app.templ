@@ -1,81 +1,93 @@
 package view
 
 templ App() {
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Super Mega App 💪</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="api/static/index.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.2.4/ol.css" />
-</head>
-
-<body>
-    <div class="flex flex-row h-screen bg-lime-50 p-1 max-h-full">
-        @Controls()
-        @Map()
-    </div>
-</body>
-
-</html>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Super Mega App 💪</title>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<script src="api/static/index.js"></script>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.2.4/ol.css"/>
+		</head>
+		<body>
+			<div class="flex flex-row h-screen bg-lime-50 p-1 max-h-full">
+				@Controls()
+				@Map()
+			</div>
+		</body>
+	</html>
 }
 
 templ Map() {
-<div id="map" class="overflow-hidden rounded-xl size-full"></div>
-<script>showMap()</script>
+	<div id="map" class="overflow-hidden rounded-xl size-full"></div>
+	<script>showMap()</script>
 }
 
 templ Controls() {
-<div class="flex flex-col w-2/6 h-full mr-1 ">
-    @Audience()
-    @FilePicker()
-</div>
+	<div class="flex flex-col w-2/6 h-full mr-1 ">
+		@Audience()
+		@FilePicker()
+	</div>
 }
 
 templ Audience() {
-<div class="flex flex-col justify-center rounded-xl size-full bg-cyan-100 size-full px-8 py-6">
-    <form action="/best_points" method="post" id="aud_form" class="flex flex-col gap-4 p-2">
-        <label for="boards" class="font-bold">Количество сторон:</label>
-        <input id="boards" name="boards" type="number" placeholder="Количество сторон" class="rounded-xl pl-2" />
-        <h1 class="font-bold">Целевая аудитория</h1>
-        <select name="gender" id="gender" class="bg-white pl-1 rounded-xl">
-            <option value="" selected disabled>Пол</option>
-            <option value="all">Любой</option>
-            <option value="male">Мужской</option>
-            <option value="female">Женский</option>
-        </select>
-        <input class="pl-1 rounded-xl" type="number" name="age_from" placeholder="Возраст от" />
-        <input class="pl-1 rounded-xl" type="number" name="age_to" placeholder="Возраст до" />
-        <label for="income">Уровни дохода:</label>
-        <div class="grid grid-rows-3 grid-cols-2" name="income" id="income">
-            <label for="income_a">A</label>
-            <input type="checkbox" name="income_a" id="income_a" checked />
-            <label for="income_b">B</label>
-            <input type="checkbox" name="income_b" id="income_b" />
-            <label for="income_c">C</label>
-            <input type="checkbox" name="income_c" id="income_c" />
-        </div>
-        <button type="submit" class="rounded-xl font-bold text-white h-12 bg-blue-300 hover:bg-blue-400">
-            Запросить рассчет
-        </button>
-    </form>
-</div>
+	<div class="flex flex-col justify-center rounded-xl size-full bg-cyan-100 size-full px-8 py-6">
+		<form action="/best_points" method="post" id="aud_form" class="flex flex-col gap-4 p-2">
+			<label for="boards" class="font-bold">Количество сторон:</label>
+			<input id="boards" name="boards" type="number" placeholder="Количество сторон" class="rounded-xl pl-2"/>
+			<h1 class="font-bold">Целевая аудитория</h1>
+			<select name="gender" id="gender" class="bg-white pl-1 rounded-xl">
+				<option value="" selected disabled>Пол</option>
+				<option value="all">Любой</option>
+				<option value="male">Мужской</option>
+				<option value="female">Женский</option>
+			</select>
+			<input class="pl-1 rounded-xl" type="number" name="age_from" placeholder="Возраст от"/>
+			<input class="pl-1 rounded-xl" type="number" name="age_to" placeholder="Возраст до"/>
+			<label for="income">Уровни дохода:</label>
+			<div class="grid grid-rows-3 grid-cols-2" name="income" id="income">
+				<label for="income_a">A</label>
+				<input type="checkbox" name="income_a" id="income_a" checked/>
+				<label for="income_b">B</label>
+				<input type="checkbox" name="income_b" id="income_b"/>
+				<label for="income_c">C</label>
+				<input type="checkbox" name="income_c" id="income_c"/>
+			</div>
+			<button type="submit" class="rounded-xl font-bold text-white h-12 bg-blue-300 hover:bg-blue-400">
+				Запросить рассчет
+			</button>
+		</form>
+	</div>
 }
 
 templ FilePicker() {
-<div class="flex flex-col justify-center mt-1 rounded-xl w-full h-3/6 bg-cyan-100 px-8 py-6">
-    <form action="/evaluate" onsubmit="evaluate(this)" method="post" id="file_form" enctype="multipart/form-data"
-        class="flex flex-col gap-4">
-        <label for="file">Загрузите файл с точками для получения оценки</label>
-        <input id="points" name="points" accept="application/json" type="file"
-            class="file:rounded-xl file:bg-blue-300 hover:file:bg-blue-400 file:border-0 file:text-white" />
-        <button type="submit" class="rounded-xl h-12 bg-blue-300 hover:bg-blue-400 text-white font-bold">
-            Запросить
-            оценку
-        </button>
-    </form>
-</div>
+	<div class="flex flex-col justify-center mt-1 rounded-xl w-full h-3/6 bg-cyan-100 px-8 py-6">
+		<form
+			action="/evaluate"
+			onsubmit="evaluate(this)"
+			method="post"
+			id="file_form"
+			enctype="multipart/form-data"
+			class="flex flex-col gap-4"
+		>
+			<label for="file">Загрузите файл с точками для получения оценки</label>
+			<input
+				id="points"
+				name="points"
+				accept="application/json"
+				type="file"
+				class="file:rounded-xl file:bg-blue-300 hover:file:bg-blue-400 file:border-0 file:text-white"
+			/>
+			<button
+				id="value_result"
+				type="submit"
+				class="rounded-xl h-12 bg-blue-300 hover:bg-blue-400 text-white font-bold"
+			>
+				Запросить
+				оценку
+			</button>
+		</form>
+	</div>
 }

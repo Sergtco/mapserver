@@ -44,6 +44,7 @@ function showMap() {
 }
 
 function showPoints(data: Array<Pin>) {
+    //parse points and convert them to features for vectorLayer
     const features = data.map((point) => new Feature({
         geometry: new Point(fromLonLat([point.longitude, point.latitude]))
     }));
@@ -59,11 +60,15 @@ function showPoints(data: Array<Pin>) {
     let vectorSource = new VectorSource({ features: features });
     const vectorLayer = new VectorLayer({ source: vectorSource });
     let layers = map.getLayers();
-    map.setLayers(layers.getArray().slice(0, 1));
+    map.setLayers(layers.getArray().slice(0, 0));
     map.addLayer(vectorLayer);
     view.setCenter(fromLonLat([data[0].longitude, data[0].latitude]));
     console.log(map.getLayers());
     map.renderSync();
+}
+
+function showValue(value: number) {
+    document.getElementById("value_result")!.innerText = "Результат: " + value.toString();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -83,6 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
             let data = JSON.parse(await response.text());
             let points: Array<Pin> = (data["points"] as Array<any>).map((p) => ({ longitude: p["lon"], latitude: p["lat"], direction: p["azimuth"] } as Pin));
             showPoints(points);
+            showValue(data["value"]);
         } catch (error) {
             console.error(error);
         }
